@@ -37,7 +37,7 @@ class Matrix:
         br, bc = other.size()
         if ar != br or ac != bc:
             raise ValueError('size(a) != size(b)')
-        return [[self.m[r][c] + other.m[r][c] for c in range(ac)] for r in range(ar)]
+        return Matrix([[self.m[r][c] + other.m[r][c] for c in range(ac)] for r in range(ar)])
     
     def __mul__(self, other):
         ar, ac = self.size()
@@ -90,15 +90,29 @@ def gauss(m, b):
 
 
 
-m = Matrix([[-2, -3, 2, -3],
-            [1, 0, -3, -2],
-            [0, 1, -1, -1],
-            [-2, 2, -1, -3]])
+# m = Matrix([[-2, -3, 2, -3],
+#             [1, 0, -3, -2],
+#             [0, 1, -1, -1],
+#             [-2, 2, -1, -3]])
 
-mi = m.invert()
-b = Matrix([[1],
-            [2],
-            [3],
-            [4]])
-x = mi * b
-print(m * x)
+# mi = m.invert()
+# b = Matrix([[1],
+#             [2],
+#             [3],
+#             [4]])
+# x = mi * b
+# print(m * x)
+
+a = Matrix([[1, 0, 1],
+            [0, 1, 0],
+            [1, 0, 1]])
+
+b = Matrix([[0, 1, 0],
+            [0, 0, 1],
+            [1, 0, 0]])
+
+x = Matrix([[-1, 0, 1],
+            [-1, -1, 2],
+            [2, 1, -2]])
+
+print(a*x*b + b*x*b)
