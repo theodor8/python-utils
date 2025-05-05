@@ -27,6 +27,10 @@ class Distribution(ABC):
     def F(self, x: float) -> float: # cumulative distribution function (CDF)
         pass
 
+    @abstractmethod
+    def __repr__(self) -> str:
+        pass
+
 
 
 class Disc(Distribution): # discrete
@@ -48,6 +52,9 @@ class Disc(Distribution): # discrete
 
     def F(self, x: float) -> float:
         return sum(self.p[xi] for xi in self.p if xi <= x)
+
+    def __repr__(self):
+        return f"Disc({self.p})"
 
 class Cont(Distribution): # continuous
     def __init__(self, f: Func, a: float = float('-inf'), b: float = float('inf')):
@@ -74,6 +81,9 @@ class Cont(Distribution): # continuous
         if x > self.b:
             return 1
         return self.func.integral(self.a, x)
+
+    def __repr__(self):
+        return f"Cont({self.func}, {self.a}, {self.b})"
 
 
 
@@ -111,6 +121,9 @@ class Bin(Distribution):
             raise ValueError
         return Bin(self.n + other.n, self.p)
 
+    def __repr__(self):
+        return f"Bin({self.n}, {self.p})"
+
 
 class Po(Distribution):
     def __init__(self, e: float):
@@ -143,6 +156,9 @@ class Po(Distribution):
             raise TypeError
         return Po(self.e + other.e)
 
+    def __repr__(self):
+        return f"Po({self.e})"
+
 class Re(Distribution):
     def __init__(self, a: float, b: float):
         if a >= b:
@@ -170,6 +186,9 @@ class Re(Distribution):
             return 1
         return (x - self.a) / (self.b - self.a)
 
+    def __repr__(self):
+        return f"Re({self.a}, {self.b})"
+
 class Exp(Distribution):
     def __init__(self, a: float):
         if a <= 0:
@@ -193,6 +212,9 @@ class Exp(Distribution):
         if x < 0:
             return 0
         return 1 - exp(-x / self.a)
+
+    def __repr__(self):
+        return f"Exp({self.a})"
     
 
 class N(Distribution):
@@ -226,13 +248,16 @@ class N(Distribution):
             raise TypeError
         return N(self.e - other.e, self.v + other.v)
 
+    def __repr__(self):
+        return f"N({self.e}, {self.v})"
+
 
 
 
 
 class Sample:
 
-    def __init__(self, x: list[float]):
+    def __init__(self, *x: float):
         self.x = x
 
     @property
@@ -244,6 +269,9 @@ class Sample:
         n = len(self.x)
         xm = self.E
         return 1 / (n - 1) * sum((xi - xm)**2 for xi in self.x)
+
+    def __repr__(self):
+        return f"Sample{self.x}"
 
 
 
