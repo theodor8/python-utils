@@ -256,7 +256,6 @@ class N(Distribution):
 
 
 class Sample:
-
     def __init__(self, *x: float):
         self.x = x
 
@@ -270,8 +269,35 @@ class Sample:
         xm = self.E
         return 1 / (n - 1) * sum((xi - xm)**2 for xi in self.x)
 
+    @staticmethod
+    def S(x: 'Sample', y: 'Sample') -> float:
+        return sum((xi - x.E) * (yi - y.E) for xi, yi in zip(x.x, y.x))
+
     def __repr__(self):
         return f"Sample{self.x}"
 
+    def __getitem__(self, i: int) -> float:
+        return self.x[i]
+
+    def __len__(self) -> int:
+        return len(self.x)
+
+
+
+
+
+class SamplePairs:
+    def __init__(self, *x: tuple[float, float]):
+        self.x = Sample(*[x[0] for x in x])
+        self.y = Sample(*[x[1] for x in x])
+
+    def __repr__(self):
+        pairs = [f"({self.x[i]}, {self.y[i]})" for i in range(len(self.x))]
+        return f"SamplePairs({', '.join(pairs)})"
+
+    def regression(self) -> tuple[float, float]: # kx + m
+        k = Sample.S(self.x, self.y) / Sample.S(self.x, self.x)
+        m = self.y.E - k * self.x.E
+        return k, m
 
 
