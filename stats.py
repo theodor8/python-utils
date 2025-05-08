@@ -287,17 +287,32 @@ class Sample:
 
 
 class SamplePairs:
-    def __init__(self, *x: tuple[float, float]):
-        self.x = Sample(*[x[0] for x in x])
-        self.y = Sample(*[x[1] for x in x])
+    # def __init__(self, *x: tuple[float, float]):
+    #     self.x = Sample(*[x[0] for x in x])
+    #     self.y = Sample(*[x[1] for x in x])
+
+    def __init__(self, x: Sample, y: Sample):
+        if len(x) != len(y):
+            raise ValueError
+        self.x = x
+        self.y = y
 
     def __repr__(self):
         pairs = [f"({self.x[i]}, {self.y[i]})" for i in range(len(self.x))]
         return f"SamplePairs({', '.join(pairs)})"
 
-    def regression(self) -> tuple[float, float]: # kx + m
+    @property
+    def lm(self) -> tuple[float, float]: # linear model, kx + m
         k = Sample.S(self.x, self.y) / Sample.S(self.x, self.x)
         m = self.y.E - k * self.x.E
         return k, m
+
+    @property
+    def r(self) -> float: # pearson correlation coefficient
+        return Sample.S(self.x, self.y) / sqrt(Sample.S(self.x, self.x) * Sample.S(self.y, self.y))
+
+    @property
+    def s(self) -> float:
+        return sqrt(1/(len(self.x) - 2) * (Sample.S(self.y, self.y) - Sample.S(self.x, self.y)**2 / Sample.S(self.x, self.x)))
 
 
