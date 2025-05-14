@@ -13,7 +13,7 @@ class Matrix:
         return Matrix([[self.m[r][c]  for r in range(rs)] for c in range(cs)])
     
     def col(self, i):
-        rs, cs = self.size()
+        rs, _ = self.size()
         return [self.m[r][i] for r in range(rs)]
     
     def copy(self):
@@ -24,9 +24,9 @@ class Matrix:
     
     @staticmethod
     def unit(n):
-        return Matrix([[int(i == j)  for j in range(n)] for i in range(n)])
+        return Matrix([[int(i == j) for j in range(n)] for i in range(n)])
     
-    def __str__(self):
+    def __repr__(self):
         s = ''
         for r in self.m:
             s += f"[{' '.join(str(x) for x in r)}]\n"
@@ -38,6 +38,13 @@ class Matrix:
         if ar != br or ac != bc:
             raise ValueError('size(a) != size(b)')
         return Matrix([[self.m[r][c] + other.m[r][c] for c in range(ac)] for r in range(ar)])
+
+    def __sub__(self, other):
+        ar, ac = self.size()
+        br, bc = other.size()
+        if ar != br or ac != bc:
+            raise ValueError('size(a) != size(b)')
+        return Matrix([[self.m[r][c] - other.m[r][c] for c in range(ac)] for r in range(ar)])
     
     def __mul__(self, other):
         ar, ac = self.size()
@@ -45,7 +52,22 @@ class Matrix:
         if ac != br:
             raise ValueError('cols(a) != rows(b)')
         return Matrix([[dot(self.m[r], other.col(c)) for c in range(bc)] for r in range(ar)])
-    
+
+    def __pow__(self, other):
+        if not isinstance(other, int):
+            raise ValueError('exponent must be int')
+        if other < 0:
+            raise ValueError('negative exponent')
+        rs, cs = self.size()
+        if rs != cs:
+            raise ValueError('Rows != Cols')
+        if other == 0:
+            return Matrix.unit(rs)
+        m = self.copy()
+        for _ in range(other - 1):
+            m *= self
+        return m
+
     def invert(self): # gauss
         m = self.copy()
         rs, cs = m.size()
@@ -57,6 +79,25 @@ class Matrix:
         m, b = gauss(m.flip(), b.flip())
         return b.flip()
 
+class ColVec(Matrix):
+    def __init__(self, *v: float):
+        super().__init__([[x] for x in v])
+
+    def __repr__(self):
+        s = ''
+        for r in self.m:
+            s += f"[{r[0]}]\n"
+        return s[:-1]
+
+class RowVec(Matrix):
+    def __init__(self, *v: float):
+        super().__init__([v])
+
+    def __repr__(self):
+        s = ''
+        for r in self.m:
+            s += f"[{' '.join(str(x) for x in r)}]\n"
+        return s[:-1]
 
 
 def dot(a, b):
@@ -87,19 +128,5 @@ def gauss(m, b):
         for k in range(bc):
             b.m[i][k] /= s
     return m, b
-
-
-
-
-A = Matrix([[1, 4, -1],
-            [0, 1, -2]])
-
-B = Matrix([[-1, 0, 1],
-            [2, -1, 1],
-            [-1, -2, 2]])
-
-C = Matrix([[1, 1],
-            [-1, 1],
-            [1, 0]])
 
 
