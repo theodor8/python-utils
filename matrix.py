@@ -1,7 +1,7 @@
 
 
 
-class Matrix:
+class Mat:
     def __init__(self, m):
         self.m = m
 
@@ -10,21 +10,21 @@ class Matrix:
     
     def transpose(self):
         rs, cs = self.size()
-        return Matrix([[self.m[r][c]  for r in range(rs)] for c in range(cs)])
+        return Mat([[self.m[r][c]  for r in range(rs)] for c in range(cs)])
     
     def col(self, i):
         rs, _ = self.size()
         return [self.m[r][i] for r in range(rs)]
     
     def copy(self):
-        return Matrix([[x for x in r] for r in self.m])
+        return Mat([[x for x in r] for r in self.m])
     
     def flip(self):
-        return Matrix([r[::-1] for r in self.m[::-1]])
+        return Mat([r[::-1] for r in self.m[::-1]])
     
     @staticmethod
     def unit(n):
-        return Matrix([[int(i == j) for j in range(n)] for i in range(n)])
+        return Mat([[int(i == j) for j in range(n)] for i in range(n)])
     
     def __repr__(self):
         s = ''
@@ -37,21 +37,21 @@ class Matrix:
         br, bc = other.size()
         if ar != br or ac != bc:
             raise ValueError('size(a) != size(b)')
-        return Matrix([[self.m[r][c] + other.m[r][c] for c in range(ac)] for r in range(ar)])
+        return Mat([[self.m[r][c] + other.m[r][c] for c in range(ac)] for r in range(ar)])
 
     def __sub__(self, other):
         ar, ac = self.size()
         br, bc = other.size()
         if ar != br or ac != bc:
             raise ValueError('size(a) != size(b)')
-        return Matrix([[self.m[r][c] - other.m[r][c] for c in range(ac)] for r in range(ar)])
+        return Mat([[self.m[r][c] - other.m[r][c] for c in range(ac)] for r in range(ar)])
     
     def __mul__(self, other):
         ar, ac = self.size()
         br, bc = other.size()
         if ac != br:
             raise ValueError('cols(a) != rows(b)')
-        return Matrix([[dot(self.m[r], other.col(c)) for c in range(bc)] for r in range(ar)])
+        return Mat([[dot(self.m[r], other.col(c)) for c in range(bc)] for r in range(ar)])
 
     def __pow__(self, other):
         if not isinstance(other, int):
@@ -62,7 +62,7 @@ class Matrix:
         if rs != cs:
             raise ValueError('Rows != Cols')
         if other == 0:
-            return Matrix.unit(rs)
+            return Mat.unit(rs)
         m = self.copy()
         for _ in range(other - 1):
             m *= self
@@ -74,12 +74,12 @@ class Matrix:
         if rs != cs:
             raise ValueError('Rows != Cols')
         n = rs
-        b = Matrix.unit(n)
+        b = Mat.unit(n)
         m, b = gauss(m, b)
         m, b = gauss(m.flip(), b.flip())
         return b.flip()
 
-class ColVec(Matrix):
+class ColVec(Mat):
     def __init__(self, *v: float):
         super().__init__([[x] for x in v])
 
@@ -89,7 +89,7 @@ class ColVec(Matrix):
             s += f"[{r[0]}]\n"
         return s[:-1]
 
-class RowVec(Matrix):
+class RowVec(Mat):
     def __init__(self, *v: float):
         super().__init__([v])
 

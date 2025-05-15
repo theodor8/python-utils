@@ -287,15 +287,15 @@ class Sample:
 
 
 class SamplePairs:
-    # def __init__(self, *x: tuple[float, float]):
-    #     self.x = Sample(*[x[0] for x in x])
-    #     self.y = Sample(*[x[1] for x in x])
-
-    def __init__(self, x: Sample, y: Sample):
-        if len(x) != len(y):
-            raise ValueError
-        self.x = x
-        self.y = y
+    def __init__(self, *x):
+        if len(x) == 2 and isinstance(x[0], Sample) and isinstance(x[1], Sample):
+            if len(x[0]) != len(x[1]):
+                raise ValueError("Samples must be of the same length")
+            self.x = x[0]
+            self.y = x[1]
+            return
+        self.x = Sample(*[x[0] for x in x])
+        self.y = Sample(*[x[1] for x in x])
 
     def __repr__(self):
         pairs = [f"({self.x[i]}, {self.y[i]})" for i in range(len(self.x))]
