@@ -20,6 +20,9 @@ class Func(ABC):
     def __pow__(self, other: 'Func') -> 'Func':
         return Pow(self, other)
 
+    def __neg__(self) -> 'Func':
+        return Mul(Con(-1), self)
+
     @abstractmethod
     def eval(self, x: float) -> float:
         pass
@@ -50,6 +53,9 @@ class Binary(Func):
 
 
 class Add(Binary):
+    def __repr__(self) -> str:
+        return f'({self.f1} + {self.f2})'
+
     def eval(self, x: float) -> float:
         return self.f1.eval(x) + self.f2.eval(x)
 
@@ -60,6 +66,9 @@ class Add(Binary):
         return Add(self.f1.prim(), self.f2.prim())
 
 class Sub(Binary):
+    def __repr__(self) -> str:
+        return f'({self.f1} - {self.f2})'
+
     def eval(self, x: float) -> float:
         return self.f1.eval(x) - self.f2.eval(x)
 
@@ -70,6 +79,9 @@ class Sub(Binary):
         return Sub(self.f1.prim(), self.f2.prim())
 
 class Mul(Binary):
+    def __repr__(self) -> str:
+        return f'({self.f1} * {self.f2})'
+
     def eval(self, x: float) -> float:
         return self.f1.eval(x) * self.f2.eval(x)
 
@@ -80,6 +92,9 @@ class Mul(Binary):
         raise NotImplementedError
 
 class Div(Binary):
+    def __repr__(self) -> str:
+        return f'({self.f1} / {self.f2})'
+
     def eval(self, x: float) -> float:
         return self.f1.eval(x) / self.f2.eval(x)
 
@@ -90,6 +105,9 @@ class Div(Binary):
         raise NotImplementedError
 
 class Pow(Binary):
+    def __repr__(self) -> str:
+        return f'({self.f1} ** {self.f2})'
+
     def eval(self, x: float) -> float:
         return self.f1.eval(x) ** self.f2.eval(x)
 
@@ -102,6 +120,9 @@ class Pow(Binary):
 
 
 class Exp(Unary):
+    def __repr__(self) -> str:
+        return f'Exp({self.f})'
+
     def eval(self, x: float) -> float:
         return exp(self.f.eval(x))
 
@@ -162,7 +183,7 @@ class Pol(Func):
 
     def __add__(self, other):
         if not isinstance(other, Pol):
-            return super().__mul__(other)
+            return super().__add__(other)
         result = self.pol.copy()
         for e, c in other.pol.items():
             if e not in result: result[e] = 0
@@ -171,7 +192,7 @@ class Pol(Func):
 
     def __sub__(self, other):
         if not isinstance(other, Pol):
-            return super().__mul__(other)
+            return super().__sub__(other)
         result = self.pol.copy()
         for e, c in other.pol.items():
             if e not in result: result[e] = 0
@@ -180,14 +201,14 @@ class Pol(Func):
 
     def __pow__(self, other):
         if not isinstance(other, int):
-            return super().__mul__(other)
+            return super().__pow__(other)
         result = Pol({0: 1})
         for _ in range(other):
             result *= self
         return result
 
 
-class Const(Pol):
+class Con(Pol):
     def __init__(self, c: float) -> None:
         super().__init__({0: c})
 

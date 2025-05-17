@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from math import comb, erf, exp, factorial, pi, sqrt, gamma
-from calc import Func, Pol, Const, Var
+from calc import Func, Pol, Con, Var
 
 
 class Distribution(ABC):
