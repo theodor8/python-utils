@@ -25,6 +25,18 @@ class Mat:
     @staticmethod
     def unit(n):
         return Mat([[int(i == j) for j in range(n)] for i in range(n)])
+
+    @staticmethod
+    def all(v, n, m):
+        return Mat([[v for _ in range(m)] for _ in range(n)])
+
+    @staticmethod
+    def zeros(n, m):
+        return Mat.all(0, n, m)
+
+    @staticmethod
+    def ones(n, m):
+        return Mat.all(1, n, m)
     
     def __repr__(self):
         s = ''
@@ -47,11 +59,16 @@ class Mat:
         return Mat([[self.m[r][c] - other.m[r][c] for c in range(ac)] for r in range(ar)])
     
     def __mul__(self, other):
+        if isinstance(other, (int, float)):
+            return Mat([[x * other for x in r] for r in self.m])
         ar, ac = self.size()
         br, bc = other.size()
         if ac != br:
             raise ValueError('cols(a) != rows(b)')
         return Mat([[dot(self.m[r], other.col(c)) for c in range(bc)] for r in range(ar)])
+
+    def __rmul__(self, other):
+        return self * other
 
     def __pow__(self, other):
         if not isinstance(other, int):
@@ -113,7 +130,6 @@ def gauss(m, b):
     if mr != br:
         raise ValueError('mr != br')
     n = min(mr, mc)
-
     for i in range(n):
         for j in range(i + 1, n):
             s = -m.m[j][i] / m.m[i][i] # scalar
