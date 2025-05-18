@@ -142,8 +142,8 @@ class Po(Distribution):
     def f(self, x: float) -> float:
         if x % 1 != 0 or x < 0:
             raise ValueError
-        x = int(x)
-        return self.e**x * exp(-self.e) / factorial(x)
+        k = int(x)
+        return self.e**k * exp(-self.e) / factorial(k)
 
     def F(self, x: float) -> float:
         if x % 1 != 0 or x < 0:
@@ -215,7 +215,7 @@ class Exp(Distribution):
 
     def __repr__(self):
         return f"Exp({self.a})"
-    
+
 
 class N(Distribution):
     def __init__(self, e: float, v: float):
